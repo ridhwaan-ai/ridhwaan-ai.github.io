@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Airbnb Income Calculator: Nightly Price, Occupancy, Costs &amp; Profit (Free)</title>
+<meta name="description" content="Free Airbnb income calculator. Enter nightly rate, occupancy, cleaning fees and costs to see monthly and yearly profit, break-even occupancy and the minimum nightly price you need. Nothing is stored or sent.">
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f7f5f2;color:#2a2420;line-height:1.55}
+.wrap{max-width:820px;margin:0 auto;padding:18px}
+h1{font-size:1.7rem;margin:.3em 0}
+h2{font-size:1.25rem;margin-top:1.6em}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin:14px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:.9rem;color:#554a42;display:block}
+input{width:100%;padding:8px;border:1px solid #cbbfb4;border-radius:6px;font-size:1rem}
+button{background:#a63a2b;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:1rem;cursor:pointer;margin-top:12px}
+.big{font-size:1.5rem;font-weight:700;color:#a63a2b}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.res>div{border:2px solid #ecdcd2;border-radius:10px;padding:10px;background:#fff}
+.cta{background:#fff8e6;border:1px solid #f0d58a;border-radius:10px;padding:12px;margin:14px 0}
+a{color:#8a2e21}
+footer{font-size:.85rem;color:#665a50;margin:30px 0 10px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}td{padding:3px 4px}
+@media(max-width:520px){.grid{grid-template-columns:1fr}}
+</style></head>
+<body><div class="wrap">
+<p><a href="/">Home</a> · <a href="/blog/">Blog</a></p>
+<h1>Airbnb Income Calculator</h1>
+<p>Works for Airbnb, VRBO, Booking.com or any short-term rental. Enter your own numbers (the defaults are just examples). Everything stays in your browser.</p>
+
+<div class="card">
+<div class="grid">
+<label>Currency symbol<input id="cur" value="$" maxlength="3"></label>
+<label>Nightly rate<input type="number" id="rate" min="0" value="140"></label>
+<label>Occupancy (% of nights booked)<input type="number" id="occ" min="0" max="100" value="62"></label>
+<label>Average stay (nights)<input type="number" id="stay" min="1" value="3"></label>
+<label>Cleaning fee charged to guest per stay<input type="number" id="cfee" min="0" value="60"></label>
+<label>What cleaning actually costs you per stay<input type="number" id="ccost" min="0" value="55"></label>
+<label>Platform fee (% of earnings, Airbnb host-only fee is typically about 3%)<input type="number" id="pfee" min="0" value="3"></label>
+<label>Rent or mortgage per month<input type="number" id="rent" min="0" value="1200"></label>
+<label>Utilities &amp; internet per month<input type="number" id="util" min="0" value="180"></label>
+<label>Supplies &amp; consumables per month<input type="number" id="supp" min="0" value="60"></label>
+<label>Insurance, tax, licences per month<input type="number" id="ins" min="0" value="90"></label>
+<label>Maintenance &amp; repairs per month<input type="number" id="maint" min="0" value="70"></label>
+<label>Other monthly costs (software, co-host, etc.)<input type="number" id="other" min="0" value="30"></label>
+</div>
+<button onclick="calc()">Calculate my Airbnb income</button>
+</div>
+
+<div id="out" style="display:none">
+<div class="res">
+<div>Monthly profit<div class="big" id="profit"></div></div>
+<div>Yearly profit<div class="big" id="yearly"></div></div>
+<div>Break-even occupancy<div class="big" id="be"></div></div>
+<div>Minimum nightly rate<div class="big" id="minrate"></div></div>
+</div>
+<div class="card"><b>Monthly breakdown</b><div id="break"></div></div>
+<div class="card" id="verdict"></div>
+</div>
+
+<div class="cta"><b>Make the stay easy to run.</b> The <a href="https://saibridhwaan.gumroad.com/l/hfxdgy/LAUNCH30">Airbnb Welcome Book Template</a> (50-page printable guest guide plus host kit; my own product, made with AI assistance) saves repeat questions and supports better reviews. Code LAUNCH30 gives 30% off while it lasts.</div>
+
+<h2>How the numbers work</h2>
+<p>Booked nights per month = 30.4 &times; occupancy. Stays per month = booked nights &divide; average stay. Revenue = booked nights &times; nightly rate + stays &times; cleaning fee. Then the platform fee, cleaning cost and your fixed monthly costs come off. Break-even occupancy is the share of nights you must book to cover every cost. The minimum nightly rate is what you need at your current occupancy to make zero profit, so charge above it.</p>
+<h2>Ways to improve your profit</h2>
+<ul>
+<li><b>Raise occupancy before price:</b> better photos, a clear title and a fast reply time matter more than a few dollars a night.</li>
+<li><b>Lengthen stays:</b> fewer turnovers mean lower cleaning cost per night. A small discount for weekly stays often pays for itself.</li>
+<li><b>Cut repeat questions:</b> a printed guest guide answers Wi-Fi, parking and check-out in one place.</li>
+<li><b>Label things:</b> clear labels for switches, bins and shelves stop common mistakes. A basic label maker such as the <a href="https://www.amazon.com/dp/B0B1L3BL1G?tag=ridhwaanai-20" rel="nofollow sponsored">Brother P-Touch PTD220</a> is handy for this.</li>
+<li><b>Check local rules:</b> licences, taxes and occupancy limits differ by city. This tool does not include income tax or occupancy tax.</li>
+</ul>
+<p>More help: <a href="/blog/what-to-put-in-an-airbnb-welcome-book/">What to put in an Airbnb welcome book</a> and the <a href="/tools/holiday-budget-calculator/">Holiday Budget Calculator</a>.</p>
+<p><small>Estimates for planning only; not financial or tax advice.</small></p>
+<footer>As an Amazon Associate I earn from qualifying purchases. · <a href="/privacy/">Privacy</a> · Free tool by Ridhwaan AI</footer>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function v(i){return Math.max(0,parseFloat($(i).value)||0)}
+function f(n){return (n<0?'-':'')+$('cur').value+Math.abs(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+function model(occ){
+  var nights=30.4*occ,stays=nights/Math.max(1,v('stay'));
+  var rev=nights*v('rate')+stays*v('cfee');
+  var fee=rev*v('pfee')/100,clean=stays*v('ccost');
+  var fixed=v('rent')+v('util')+v('supp')+v('ins')+v('maint')+v('other');
+  return {nights:nights,stays:stays,rev:rev,fee:fee,clean:clean,fixed:fixed,profit:rev-fee-clean-fixed};
+}
+function calc(){
+  var occ=Math.min(1,v('occ')/100),m=model(occ);
+  $('profit').textContent=f(m.profit);$('yearly').textContent=f(m.profit*12);
+  // break-even: profit is linear in occupancy
+  var p1=model(1).profit,p0=model(0).profit,slope=p1-p0;
+  var be=slope>0?(0-p0)/slope:NaN;
+  $('be').textContent=(isFinite(be)&&be<=1)?Math.round(be*1000)/10+'%':'Not reachable';
+  var st=Math.max(1,v('stay')),nights=m.nights;
+  var minrate=nights>0?((m.fixed+m.clean)/(1-v('pfee')/100)-m.stays*v('cfee'))/nights:0;
+  $('minrate').textContent=nights>0?f(Math.max(0,minrate)):'n/a';
+  var rows=[['Booking revenue',nights*v('rate')],['Cleaning fees collected',m.stays*v('cfee')],['Platform fee',-m.fee],['Cleaning cost',-m.clean],['Rent / mortgage',-v('rent')],['Utilities & internet',-v('util')],['Supplies',-v('supp')],['Insurance, tax, licences',-v('ins')],['Maintenance',-v('maint')],['Other',-v('other')]];
+  var h='<table>';rows.forEach(function(r){h+='<tr><td>'+r[0]+'</td><td style="text-align:right">'+f(r[1])+'</td></tr>'});
+  h+='<tr><td><b>Profit</b></td><td style="text-align:right"><b>'+f(m.profit)+'</b></td></tr></table>';
+  $('break').innerHTML=h;
+  var msg;
+  if(m.profit<0)msg='At these numbers you lose <b>'+f(-m.profit)+'</b> a month. Raise the rate to at least <b>'+f(Math.max(0,minrate))+'</b>, lift occupancy or cut fixed costs.';
+  else msg='You keep about <b>'+f(m.profit)+'</b> a month, roughly <b>'+f(m.profit/Math.max(1,nights))+'</b> per booked night. Your rate has a cushion of '+f(v('rate')-Math.max(0,minrate))+' over break-even.';
+  $('verdict').innerHTML=msg;
+  $('out').style.display='block';
+}
+calc();
+</script>
+</body></html>
