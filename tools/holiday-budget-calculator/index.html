@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Holiday Budget Calculator: Gifts, Food, Travel &amp; Weekly Savings Plan (Free)</title>
+<meta name="description" content="Free holiday budget calculator. Add gifts, food, decorations, travel and more, then see your total, a cost per person and how much to save each week before the big day. Nothing is stored or sent.">
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f7f5f2;color:#2a2420;line-height:1.55}
+.wrap{max-width:820px;margin:0 auto;padding:18px}
+h1{font-size:1.7rem;margin:.3em 0}
+h2{font-size:1.25rem;margin-top:1.6em}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin:14px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:.9rem;color:#554a42;display:block}
+input{width:100%;padding:8px;border:1px solid #cbbfb4;border-radius:6px;font-size:1rem}
+button{background:#a63a2b;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:1rem;cursor:pointer;margin-top:12px}
+.big{font-size:1.5rem;font-weight:700;color:#a63a2b}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.res>div{border:2px solid #ecdcd2;border-radius:10px;padding:10px}
+.bar{height:22px;background:#eee;border-radius:11px;overflow:hidden;margin:6px 0}
+.bar>span{display:block;height:100%;background:#a63a2b}
+.cta{background:#fff8e6;border:1px solid #f0d58a;border-radius:10px;padding:12px;margin:14px 0}
+a{color:#8a2e21}
+footer{font-size:.85rem;color:#665a50;margin:30px 0 10px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}td{padding:3px 4px}
+@media(max-width:520px){.grid{grid-template-columns:1fr}}
+</style></head>
+<body><div class="wrap">
+<p><a href="/">Home</a> · <a href="/blog/">Blog</a></p>
+<h1>Holiday Budget Calculator</h1>
+<p>Works for Christmas, Eid, Hanukkah, Diwali, Thanksgiving, birthdays or any celebration. Fill in what you expect to spend (leave blank what doesn't apply). Everything stays in your browser.</p>
+
+<div class="card">
+<div class="grid">
+<label>Currency symbol<input id="cur" value="$" maxlength="3"></label>
+<label>Total you can afford to spend (optional)<input type="number" id="limit" min="0" placeholder="e.g. 800"></label>
+<label>Number of people you buy gifts for<input type="number" id="people" min="0" value="8"></label>
+<label>Average gift budget per person<input type="number" id="per" min="0" value="40"></label>
+<label>Stocking stuffers / small extras<input type="number" id="stock" min="0" value="40"></label>
+<label>Cards, wrapping &amp; postage<input type="number" id="wrap" min="0" value="30"></label>
+<label>Food &amp; drink for the celebration<input type="number" id="food" min="0" value="150"></label>
+<label>Decorations &amp; tree/lights<input type="number" id="decor" min="0" value="50"></label>
+<label>Travel &amp; accommodation<input type="number" id="travel" min="0" value="0"></label>
+<label>Outfits, events &amp; activities<input type="number" id="events" min="0" value="40"></label>
+<label>Charity / giving (sadaqah, donations)<input type="number" id="give" min="0" value="50"></label>
+<label>Other / buffer for surprises (suggest 10%)<input type="number" id="other" min="0" value="50"></label>
+<label>Weeks left until the day<input type="number" id="weeks" min="1" value="10"></label>
+<label>Already saved<input type="number" id="saved" min="0" value="0"></label>
+</div>
+<button onclick="calc()">Calculate my holiday budget</button>
+</div>
+
+<div id="out" style="display:none">
+<div class="res">
+<div>Total budget<div class="big" id="total"></div></div>
+<div>Save per week<div class="big" id="weekly"></div></div>
+<div>Gifts total<div class="big" id="giftsT"></div></div>
+</div>
+<div class="card" id="limitBox" style="display:none"></div>
+<div class="card"><b>Where the money goes</b><div id="break"></div></div>
+</div>
+
+<div class="cta"><b>Plan it all on paper too.</b> The <a href="https://saibridhwaan.gumroad.com/l/xpzaew/LAUNCH30">Holiday Planner 2026 Printable</a> (52 pages: gift lists, budget, menu, advent countdown, 6-week plan; my own product, made with AI assistance) is the companion to this calculator. Code LAUNCH30 gives 30% off while it lasts.</div>
+
+<h2>How to use your result</h2>
+<p>The weekly saving number is simply what is left to save divided by the weeks remaining. If it is higher than you can manage, trim the biggest category first, usually gifts or food, rather than cutting everything a little. A lower per-person gift budget, a name-draw (secret gift exchange) or homemade presents are the easiest ways to bring it down.</p>
+<h2>Tips for staying on budget</h2>
+<ul>
+<li>Write the gift list first and set each person's amount before you shop.</li>
+<li>Pay with money you already have. Avoid putting gifts on a credit card, because interest turns a $40 gift into a $50 one.</li>
+<li>Keep a 10% buffer for the things everyone forgets: batteries, extra wrapping paper, a last-minute guest.</li>
+<li>Track every purchase in one place as you go.</li>
+</ul>
+<p>More help: <a href="/blog/how-to-budget-for-christmas-gifts/">How to budget for Christmas gifts</a> and the <a href="/tools/debt-payoff-calculator/">Debt Payoff Calculator</a>.</p>
+<p><small>Estimates for planning only; not financial advice.</small></p>
+<footer>As an Amazon Associate I earn from qualifying purchases. · <a href="/privacy/">Privacy</a> · Free tool by Ridhwaan AI</footer>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function v(i){return Math.max(0,parseFloat($(i).value)||0)}
+function f(n){return $('cur').value+n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+function calc(){
+  var gifts=v('people')*v('per');
+  var items=[['Gifts',gifts],['Stocking stuffers',v('stock')],['Cards, wrap & postage',v('wrap')],['Food & drink',v('food')],['Decorations',v('decor')],['Travel',v('travel')],['Events & outfits',v('events')],['Charity / giving',v('give')],['Other / buffer',v('other')]];
+  var total=items.reduce(function(s,x){return s+x[1]},0);
+  var left=Math.max(0,total-v('saved')),wk=Math.max(1,v('weeks'));
+  $('total').textContent=f(total);$('weekly').textContent=f(left/wk);$('giftsT').textContent=f(gifts);
+  var h='<table>';
+  items.forEach(function(x){if(x[1]>0){var p=total?Math.round(x[1]/total*100):0;h+='<tr><td>'+x[0]+'</td><td style="text-align:right">'+f(x[1])+'</td><td style="width:40%"><div class="bar"><span style="width:'+p+'%"></span></div></td><td>'+p+'%</td></tr>'}});
+  $('break').innerHTML=h+'</table>';
+  var lb=$('limitBox'),lim=v('limit');
+  if(lim>0){lb.style.display='block';
+    if(total<=lim)lb.innerHTML='You are <b>'+f(lim-total)+'</b> under your limit of '+f(lim)+'. Well planned.';
+    else{var over=total-lim;var pp=v('people')>0?over/v('people'):0;lb.innerHTML='You are <b>'+f(over)+'</b> over your limit of '+f(lim)+'.'+(pp>0&&pp<v('per')?' Cutting about '+f(pp)+' from each gift would close the gap.':' Try trimming food, decorations or travel.')}
+  } else lb.style.display='none';
+  $('out').style.display='block';
+}
+calc();
+</script>
+</body></html>
