@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gift List Maker: Track Who, What &amp; Budget (Free, Printable)</title>
+<meta name="description" content="Free gift list maker. Add people, gift ideas and budgets, tick off bought and wrapped, see your running total versus budget, then print the list. Nothing is stored or sent.">
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f7f5f2;color:#2a2420;line-height:1.55}
+.wrap{max-width:900px;margin:0 auto;padding:18px}
+h1{font-size:1.7rem;margin:.3em 0}
+h2{font-size:1.25rem;margin-top:1.6em}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin:14px 0}
+.row{display:grid;grid-template-columns:1.1fr 1.6fr .7fr .7fr auto auto auto;gap:6px;align-items:center;margin:6px 0}
+input[type=text],input[type=number]{width:100%;padding:7px;border:1px solid #cbbfb4;border-radius:6px;font-size:.95rem}
+button{background:#a63a2b;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:1rem;cursor:pointer;margin:6px 6px 0 0}
+button.sec{background:#6b5d52}
+.hd{font-size:.8rem;color:#665a50;font-weight:600}
+.big{font-size:1.3rem;font-weight:700;color:#a63a2b}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.sum>div{border:2px solid #ecdcd2;border-radius:10px;padding:8px;background:#fff}
+.cta{background:#fff8e6;border:1px solid #f0d58a;border-radius:10px;padding:12px;margin:14px 0}
+a{color:#8a2e21}
+footer{font-size:.85rem;color:#665a50;margin:30px 0 10px}
+.x{background:#999;padding:6px 10px;margin:0}
+@media(max-width:700px){.row{grid-template-columns:1fr 1fr;border-bottom:1px solid #eee;padding-bottom:6px}.hd{display:none}}
+@media print{.noprint,.cta,footer,.x,.extra{display:none!important}body{background:#fff}.card{box-shadow:none}}
+</style></head>
+<body><div class="wrap">
+<p class="noprint"><a href="/">Home</a> · <a href="/blog/">Blog</a></p>
+<h1>Gift List Maker</h1>
+<p class="noprint">For Christmas, Eid, Hanukkah, Diwali, birthdays, weddings or any occasion. Add a row per person, tick "bought" and "wrapped" as you go, and print the list. Your list lives only in this page: it is not saved or sent anywhere, so print it before you close the tab.</p>
+
+<div class="card">
+<div class="noprint" style="margin-bottom:8px"><label>Currency <input type="text" id="cur" value="$" maxlength="3" style="width:60px" onchange="sum()"></label>
+ <label style="margin-top:6px">Total gift budget <input type="number" id="budget" min="0" value="300" style="width:120px" oninput="sum()"></label></div>
+<div class="row hd"><span>Person</span><span>Gift idea</span><span>Budget</span><span>Actual</span><span>Bought</span><span>Wrapped</span><span class="noprint"></span></div>
+<div id="rows"></div>
+<div class="noprint"><button onclick="add()">+ Add person</button><button class="sec" onclick="window.print()">Print list</button></div>
+</div>
+
+<div class="sum">
+<div>Planned<div class="big" id="sPlan"></div></div>
+<div>Spent so far<div class="big" id="sAct"></div></div>
+<div>Left of budget<div class="big" id="sLeft"></div></div>
+<div>Bought<div class="big" id="sBought"></div></div>
+</div>
+
+<div class="cta extra"><b>Want a bigger planner?</b> The <a href="https://saibridhwaan.gumroad.com/l/xpzaew/LAUNCH30">Holiday Planner 2026 Printable</a> (52 pages: gift lists, wish lists, budget, menu, advent countdown; my own product, made with AI assistance) goes with this tool. Or grab the <a href="https://saibridhwaan.gumroad.com/l/isvqko">free Holiday Countdown Checklist</a>. Code LAUNCH30 gives 30% off the paid planner.</div>
+
+<div class="extra">
+<h2>Tips for a better gift list</h2>
+<ul>
+<li>Set the budget for each person before you start shopping, then add them up and compare with your total.</li>
+<li>Write the idea next to the name the moment you think of it. Overheard hints are your best source.</li>
+<li>Use "Actual" to log what you really paid. If it runs over, trim the next person on the list instead of ignoring it.</li>
+<li>Buy for far-away relatives first so postage is not rushed.</li>
+</ul>
+<p>Work out the whole celebration with the <a href="/tools/holiday-budget-calculator/">Holiday Budget Calculator</a>, and read <a href="/blog/how-to-budget-for-christmas-gifts/">How to budget for Christmas gifts</a>.</p>
+<p><small>Planning aid only.</small></p>
+</div>
+<footer>As an Amazon Associate I earn from qualifying purchases. · <a href="/privacy/">Privacy</a> · Free tool by Ridhwaan AI</footer>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function n(x){return Math.max(0,parseFloat(x)||0)}
+function f(x){return $('cur').value+x.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+function add(p,g,b){
+  var d=document.createElement('div');d.className='row';
+  d.innerHTML='<input type="text" placeholder="Name" value="'+(p||'')+'"><input type="text" placeholder="Gift idea" value="'+(g||'')+'">'+
+  '<input type="number" min="0" placeholder="0" value="'+(b||'')+'" oninput="sum()"><input type="number" min="0" placeholder="0" oninput="sum()">'+
+  '<input type="checkbox" onchange="sum()" title="Bought"><input type="checkbox" title="Wrapped"><button class="x" onclick="this.parentNode.remove();sum()" title="Remove">x</button>';
+  $('rows').appendChild(d);sum();
+}
+function sum(){
+  var rs=$('rows').children,plan=0,act=0,b=0;
+  for(var i=0;i<rs.length;i++){var ins=rs[i].querySelectorAll('input');plan+=n(ins[2].value);act+=n(ins[3].value);if(ins[4].checked)b++}
+  $('sPlan').textContent=f(plan);$('sAct').textContent=f(act);
+  var left=n($('budget').value)-Math.max(plan,act);
+  $('sLeft').textContent=f(left);$('sLeft').style.color=left<0?'#b00020':'#a63a2b';
+  $('sBought').textContent=b+' / '+rs.length;
+}
+add('Mum','Scarf',30);add('Dad','Book',25);add('Sibling','',30);add('Friend','',20);
+</script>
+</body></html>
