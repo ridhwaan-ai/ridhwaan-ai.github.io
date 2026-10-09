@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Savings Goal Calculator: How Much to Save Each Month (Free)</title>
+<meta name="description" content="Free savings goal calculator. Enter a target, what you have saved and a deadline to see how much to save each week or month, or how long a goal will take. Nothing is stored or sent.">
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f5f7f6;color:#1d2b27;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding:18px}
+h1{font-size:1.7rem;margin:.3em 0}
+h2{font-size:1.25rem;margin-top:1.6em}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin:14px 0}
+input,select{width:100%;padding:8px;border:1px solid #b9c6c1;border-radius:6px;font-size:1rem}
+label{font-size:.9rem;color:#33443f}
+button{background:#1f7a5c;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:1rem;cursor:pointer;margin:8px 4px 4px 0}
+button.sec{background:#e3ece8;color:#1d2b27}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.row>div{flex:1;min-width:180px}
+.res{display:flex;gap:12px;flex-wrap:wrap}
+.res>div{flex:1;min-width:200px;border:2px solid #cfe0d9;border-radius:10px;padding:12px}
+.big{font-size:1.5rem;font-weight:700;color:#1f7a5c}
+.good{background:#e6f5ee;border-radius:8px;padding:10px;margin-top:10px}
+.cta{background:#fff8e6;border:1px solid #f0d58a;border-radius:10px;padding:12px;margin:14px 0}
+a{color:#17684d}
+footer{font-size:.85rem;color:#52625d;margin:30px 0 10px}
+.err{color:#b00020}
+.bar{height:16px;background:#e3ece8;border-radius:8px;overflow:hidden;margin:8px 0}
+.bar div{height:100%;background:#1f7a5c;width:0}
+table{width:100%;border-collapse:collapse}
+th,td{padding:5px 4px;text-align:left;font-size:.92rem;border-bottom:1px solid #e6eeea}
+</style></head>
+<body><div class="wrap">
+<p><a href="/">Home</a> · <a href="/blog/">Blog</a></p>
+<h1>Savings Goal Calculator</h1>
+<p>Saving for an emergency fund, a trip, Hajj or Umrah, a wedding, a laptop or the holidays? Enter your goal and see exactly what to put aside each week or month. It runs in your browser. Nothing is saved or sent. It assumes plain saving with no interest or investment return, so the numbers are cautious.</p>
+
+<div class="card">
+<div class="row">
+<div><label>Goal name<input type="text" id="name" value="Emergency fund"></label></div>
+<div><label>Target amount<input type="number" id="target" value="3000" min="0" step="any"></label></div>
+<div><label>Already saved<input type="number" id="saved" value="400" min="0" step="any"></label></div>
+</div>
+<div class="row">
+<div><label>Deadline<input type="date" id="deadline"></label></div>
+<div><label>Or: I can save per month<input type="number" id="perMonth" placeholder="optional" min="0" step="any"></label></div>
+<div><label>Currency symbol<input type="text" id="cur" value="$" maxlength="3"></label></div>
+</div>
+<button onclick="calc()">Calculate</button>
+<button class="sec" onclick="example()">Reset example</button>
+<div id="msg" class="err"></div>
+</div>
+
+<div id="out" style="display:none">
+<div class="res">
+<div>Still to save<div class="big" id="left"></div><div id="pct"></div></div>
+<div id="boxA">Needed to hit the deadline<div class="big" id="needM"></div><div id="needW"></div></div>
+<div id="boxB">At your own pace<div class="big" id="paceT"></div><div id="paceD"></div></div>
+</div>
+<div class="bar"><div id="barfill"></div></div>
+<div class="good" id="tip"></div>
+<div class="card"><b>Milestones</b><table id="miles"><thead><tr><th>Milestone</th><th>Amount</th><th>Around</th></tr></thead><tbody></tbody></table></div>
+</div>
+
+<div class="cta"><b>Want it on paper?</b> The <a href="https://saibridhwaan.gumroad.com/l/tdlpft/LAUNCH30">2027 Budget Planner Printable</a> (my own product, made with AI assistance) has an emergency fund tracker, two savings goal pages, a sinking funds planner and a 52-week savings challenge. Code LAUNCH30 gives 30% off while it lasts. Saving for gifts? Try the <a href="/tools/holiday-budget-calculator/">Holiday Budget Calculator</a>.</div>
+
+<h2>How the calculation works</h2>
+<p>Remaining = target minus what you have saved. Monthly amount = remaining divided by the months to your deadline. Weekly amount = remaining divided by the weeks. If you enter your own monthly amount instead, the tool tells you the month you will reach the goal.</p>
+<h2>Tips to reach a savings goal</h2>
+<ul>
+<li>Pay yourself first: move the money the day you are paid, before you can spend it.</li>
+<li>Give each goal a name and a number. Specific goals are easier to keep than "save more".</li>
+<li>Build a starter emergency fund first, then work towards three to six months of essential costs.</li>
+<li>Put windfalls, such as a refund or bonus, straight towards the goal.</li>
+<li>Review monthly. If you fall behind, extend the deadline rather than quitting.</li>
+<li>Keep savings in a safe, ordinary account. Avoid anything promising guaranteed high returns.</li>
+</ul>
+<p>Related reading: <a href="/blog/how-to-budget-for-christmas-gifts/">How to budget for Christmas gifts without new debt</a> and the <a href="/tools/debt-payoff-calculator/">Debt Payoff Calculator</a>.</p>
+<p><small>This tool gives estimates for education only and is not financial advice.</small></p>
+<footer>As an Amazon Associate I earn from qualifying purchases. · <a href="/privacy/">Privacy</a> · Free tool by Ridhwaan AI</footer>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function fmt(n){return $('cur').value+Math.round(n).toLocaleString()}
+function dstr(d){return d.toLocaleDateString(undefined,{month:'long',year:'numeric'})}
+function addMonths(n){var d=new Date();d.setMonth(d.getMonth()+Math.ceil(n));return d}
+function example(){
+  $('name').value='Emergency fund';$('target').value=3000;$('saved').value=400;$('perMonth').value='';
+  var d=new Date();d.setMonth(d.getMonth()+10);$('deadline').value=d.toISOString().slice(0,10);
+  calc();
+}
+function calc(){
+  $('msg').textContent='';
+  var t=parseFloat($('target').value),s=parseFloat($('saved').value)||0,pm=parseFloat($('perMonth').value);
+  var dl=$('deadline').value;
+  if(!(t>0)){$('msg').textContent='Enter a target amount above zero.';$('out').style.display='none';return}
+  var left=Math.max(0,t-s);
+  $('out').style.display='block';
+  $('left').textContent=fmt(left);
+  $('pct').textContent=Math.min(100,Math.round(s/t*100))+'% of '+fmt(t)+' saved';
+  $('barfill').style.width=Math.min(100,s/t*100)+'%';
+  var months=null;
+  if(dl){
+    var days=(new Date(dl)-new Date())/86400000;
+    if(days<=0){$('msg').textContent='Pick a deadline in the future.';$('out').style.display='none';return}
+    months=days/30.4375;
+    var m=left/Math.max(1,Math.round(months*10)/10);
+    $('boxA').style.display='block';
+    $('needM').textContent=fmt(left/Math.max(months,1))+' / month';
+    $('needW').textContent='or '+fmt(left/Math.max(days/7,1))+' / week until '+dstr(new Date(dl));
+  } else {$('boxA').style.display='none'}
+  var rate=null;
+  if(pm>0){
+    var n=left/pm;
+    $('boxB').style.display='block';
+    $('paceT').textContent=left===0?'Done!':(Math.ceil(n)+' months');
+    $('paceD').textContent=left===0?'':('Goal reached around '+dstr(addMonths(n)));
+    rate=pm;
+  } else {$('boxB').style.display='none'}
+  var per=rate||(months?left/Math.max(months,1):0);
+  var tip='';
+  if(left===0)tip='You have already reached '+esc($('name').value||'your goal')+'. Alhamdulillah, time to set the next one.';
+  else if(months&&pm>0){
+    tip=pm>=left/Math.max(months,1)?'Your own pace beats the deadline. You would finish about '+Math.max(0,Math.round(months-left/pm))+' month(s) early.':'At '+fmt(pm)+' a month you would miss the deadline. You need '+fmt(left/Math.max(months,1))+' a month, or move the deadline.';
+  } else if(months)tip='Set up an automatic transfer of '+fmt(left/Math.max(months,1))+' on payday so you never have to decide.';
+  else tip='Add a deadline or a monthly amount to see your plan.';
+  $('tip').innerHTML=tip;
+  var tb=$('miles').tBodies[0];tb.innerHTML='';
+  if(per>0&&left>0){
+    [25,50,75,100].forEach(function(p){
+      var amt=t*p/100;if(amt<=s)return;
+      var mm=(amt-s)/per;
+      tb.innerHTML+='<tr><td>'+p+'%</td><td>'+fmt(amt)+'</td><td>'+dstr(addMonths(mm))+'</td></tr>';
+    });
+  }
+}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+example();
+</script>
+</body></html>
