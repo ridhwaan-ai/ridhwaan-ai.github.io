@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bill Split and Tip Calculator: Split a Check Fairly (Free)</title>
+<meta name="description" content="Free bill split and tip calculator. Enter the bill, tip percentage and number of people to see each share, with optional uneven splits and rounding. Nothing is stored or sent.">
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f5f7f6;color:#1d2b27;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding:18px}
+h1{font-size:1.7rem;margin:.3em 0}
+h2{font-size:1.25rem;margin-top:1.6em}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin:14px 0}
+input,select{width:100%;padding:8px;border:1px solid #b9c6c1;border-radius:6px;font-size:1rem}
+label{font-size:.9rem;color:#33443f}
+button{background:#1f7a5c;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:1rem;cursor:pointer;margin:8px 4px 4px 0}
+button.sec{background:#e3ece8;color:#1d2b27}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.row>div{flex:1;min-width:150px}
+.res{display:flex;gap:12px;flex-wrap:wrap}
+.res>div{flex:1;min-width:150px;border:2px solid #cfe0d9;border-radius:10px;padding:12px}
+.big{font-size:1.5rem;font-weight:700;color:#1f7a5c}
+.cta{background:#fff8e6;border:1px solid #f0d58a;border-radius:10px;padding:12px;margin:14px 0}
+a{color:#17684d}
+footer{font-size:.85rem;color:#52625d;margin:30px 0 10px}
+.err{color:#b00020}
+</style></head>
+<body><div class="wrap">
+<p><a href="/">Home</a> · <a href="/blog/">Blog</a></p>
+<h1>Bill Split and Tip Calculator</h1>
+<p>Dining out with friends, sharing a holiday rental or splitting a gift? Enter the bill, a tip and the number of people to see who owes what. It runs in your browser and nothing is saved or sent.</p>
+
+<div class="card">
+<div class="row">
+<div><label>Bill before tip<input type="number" id="bill" value="86.50" min="0" step="any"></label></div>
+<div><label>Tip %<input type="number" id="tip" value="15" min="0" step="any"></label></div>
+<div><label>People<input type="number" id="ppl" value="4" min="1" step="1"></label></div>
+<div><label>Currency<input type="text" id="cur" value="$" maxlength="3"></label></div>
+</div>
+<div class="row">
+<div><label>Round each share<select id="rnd"><option value="0">No rounding</option><option value="1">Up to next whole unit</option></select></label></div>
+<div><label>Tip is calculated on<select id="base"><option value="pre">Bill before tax (enter pre-tax amount)</option><option value="all">The amount entered</option></select></label></div>
+</div>
+<button onclick="calc()">Calculate</button>
+<button class="sec" onclick="quick(10)">10%</button><button class="sec" onclick="quick(15)">15%</button><button class="sec" onclick="quick(18)">18%</button><button class="sec" onclick="quick(20)">20%</button>
+<div id="msg" class="err"></div>
+</div>
+
+<div class="res" id="out">
+<div>Tip<div class="big" id="tipAmt"></div></div>
+<div>Total<div class="big" id="total"></div></div>
+<div>Each person pays<div class="big" id="each"></div><div id="note"></div></div>
+</div>
+
+<div class="card">
+<b>Uneven split (optional)</b>
+<p style="margin:.3em 0">Enter what each person ordered, one amount per line. The tip is shared in proportion.</p>
+<textarea id="items" rows="4" style="width:100%;padding:8px;border:1px solid #b9c6c1;border-radius:6px;font-size:1rem" placeholder="12.50&#10;30&#10;44"></textarea>
+<button onclick="uneven()">Split by order</button>
+<div id="uout"></div>
+</div>
+
+<div class="cta"><b>Planning a bigger get-together?</b> The <a href="https://saibridhwaan.gumroad.com/l/xpzaew/LAUNCH30">Holiday Planner 2026 Printable</a> (my own product, made with AI assistance) has a guest list, potluck sign-up, menu planner and budget pages. Code LAUNCH30 gives 30% off while it lasts. Or try the <a href="/tools/holiday-budget-calculator/">Holiday Budget Calculator</a>.</div>
+
+<h2>How it works</h2>
+<p>Tip = bill x tip%. Total = bill + tip. Each share = total divided by the number of people. In the uneven split, each person pays their own order plus the same percentage tip on it.</p>
+<h2>Tipping notes</h2>
+<ul>
+<li>Customs differ by country. In the US, 15 to 20% is common in restaurants. In many other countries a service charge is already included or tipping is small.</li>
+<li>Check the receipt first. If a service charge is already added, you may not need another tip.</li>
+<li>Agree on the split before ordering, especially for shared dishes, so nobody is surprised later.</li>
+<li>For shared holiday rentals, write down who paid what in one place and settle up once.</li>
+</ul>
+<p>Related: <a href="/blog/how-to-budget-for-christmas-gifts/">How to budget for Christmas gifts</a> and the <a href="/tools/gift-list-maker/">Gift List Maker</a>.</p>
+<p><small>Estimates only.</small></p>
+<footer>As an Amazon Associate I earn from qualifying purchases. · <a href="/privacy/">Privacy</a> · Free tool by Ridhwaan AI</footer>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function fmt(n){return $('cur').value+n.toFixed(2)}
+function quick(p){$('tip').value=p;calc()}
+function calc(){
+  $('msg').textContent='';
+  var b=parseFloat($('bill').value),t=parseFloat($('tip').value)||0,n=Math.max(1,Math.floor(parseFloat($('ppl').value)||1));
+  if(!(b>=0)){$('msg').textContent='Enter the bill amount.';return}
+  var tip=b*t/100,total=b+tip,each=total/n;
+  if($('rnd').value==='1')each=Math.ceil(each);
+  $('tipAmt').textContent=fmt(tip);$('total').textContent=fmt(total);$('each').textContent=fmt(each);
+  $('note').textContent=$('rnd').value==='1'?('Rounded up. Table pays '+fmt(each*n)+' in total.'):'';
+}
+function uneven(){
+  var b=parseFloat($('bill').value)||0,t=parseFloat($('tip').value)||0;
+  var v=$('items').value.split(/\n/).map(parseFloat).filter(function(x){return x>=0});
+  if(!v.length){$('uout').textContent='Enter at least one amount.';return}
+  var h='<table style="width:100%">';var sum=0;
+  v.forEach(function(x,i){var p=x*(1+t/100);sum+=p;h+='<tr><td>Person '+(i+1)+'</td><td>'+fmt(x)+' + tip</td><td><b>'+fmt(p)+'</b></td></tr>'});
+  h+='<tr><td colspan="2">Sum of shares</td><td><b>'+fmt(sum)+'</b></td></tr></table>';
+  var items=v.reduce(function(a,c){return a+c},0);
+  if(Math.abs(items-b)>0.01)h+='<p class="err">Orders add up to '+fmt(items)+', not the bill of '+fmt(b)+'. Check for shared items or tax.</p>';
+  $('uout').innerHTML=h;
+}
+calc();
+</script>
+</body></html>
