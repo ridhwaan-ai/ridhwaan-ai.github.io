@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Airbnb Break-Even Occupancy Calculator (Free): How Many Nights Do You Need?</title>
+<meta name="description" content="Free Airbnb break-even calculator. Enter your nightly rate, cleaning fee and monthly costs to see how many nights per month you must book to cover costs, and your profit at any occupancy. Nothing is stored.">
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f5f7f6;color:#1d2b27;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding:18px}
+h1{font-size:1.7rem;margin:.3em 0}
+h2{font-size:1.25rem;margin-top:1.6em}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin:14px 0}
+input{width:100%;padding:8px;border:1px solid #b9c6c1;border-radius:6px;font-size:1rem}
+label{font-size:.9rem;color:#33443f}
+button{background:#1f7a5c;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:1rem;cursor:pointer;margin:8px 4px 4px 0}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.row>div{flex:1;min-width:150px}
+table{width:100%;border-collapse:collapse}
+td,th{padding:8px;border-bottom:1px solid #e0e8e4;text-align:left}
+.cta{background:#fff8e6;border:1px solid #f0d58a;border-radius:10px;padding:12px;margin:14px 0}
+a{color:#17684d}
+footer{font-size:.85rem;color:#52625d;margin:30px 0 10px}
+.err{color:#b00020}
+.big{font-size:1.4rem;font-weight:700}
+.neg{color:#b00020}.pos{color:#17684d}
+</style></head>
+<body><div class="wrap">
+<p><a href="/">Home</a> · <a href="/blog/">Blog</a></p>
+<h1>Airbnb Break-Even Occupancy Calculator</h1>
+<p>How many nights a month do you need to book before your short-term rental covers its costs? Fill in the boxes (use your own currency) and press Calculate. It runs in your browser; nothing is saved or sent.</p>
+
+<div class="card">
+<div class="row">
+<div><label>Nightly rate<input type="number" id="rate" value="120" min="0" step="1"></label></div>
+<div><label>Cleaning fee you keep per stay<input type="number" id="clean" value="60" min="0" step="1"></label></div>
+<div><label>Average nights per stay<input type="number" id="los" value="3" min="1" step="0.5"></label></div>
+</div>
+<div class="row">
+<div><label>Fixed monthly costs (rent or housing, utilities, internet, insurance)<input type="number" id="fixed" value="1200" min="0" step="10"></label></div>
+<div><label>Cost to clean and turn over per stay<input type="number" id="cc" value="45" min="0" step="1"></label></div>
+<div><label>Supplies per stay (toiletries, coffee, laundry)<input type="number" id="sup" value="8" min="0" step="1"></label></div>
+</div>
+<div class="row">
+<div><label>Platform fee (%) <input type="number" id="fee" value="3" min="0" max="40" step="0.5"></label></div>
+<div><label>Days available per month<input type="number" id="days" value="30" min="1" max="31" step="1"></label></div>
+</div>
+<button onclick="calc()">Calculate</button>
+<div id="msg" class="err"></div>
+</div>
+
+<div class="card">
+<div id="head"></div>
+<table id="out"></table>
+<p><small id="note"></small></p></div>
+
+<div class="cta"><b>Ready to host?</b> The <a href="https://saibridhwaan.gumroad.com/l/hfxdgy/LAUNCH30">Airbnb Welcome Book Template</a> (my own product, made with AI assistance) gives guests everything they need and cuts repeat questions. Code LAUNCH30 gives 30% off while it lasts. Also try the <a href="/tools/airbnb-income-calculator/">Airbnb Income Calculator</a>.</div>
+
+<h2>How it works</h2>
+<p>Each night you book earns your nightly rate. Each stay also earns the cleaning fee but costs you cleaning and supplies. The calculator turns that into a profit per night, then divides your fixed monthly costs by it to find the break-even number of nights. Divide by the days available and you get the break-even occupancy rate.</p>
+<h2>What is a good occupancy rate?</h2>
+<p>It depends on your city and season, so check your own booking history and similar listings nearby rather than trusting a national average. If your break-even occupancy is above what comparable listings reach, lower your costs or raise your rate before you list. If it is far below, you have a comfortable margin.</p>
+<h2>Ways to lower your break-even point</h2>
+<ul>
+<li>Set a minimum stay of two or three nights to cut cleaning turnovers.</li>
+<li>Charge a cleaning fee that honestly covers the real cost of turnover.</li>
+<li>Price higher on weekends and holidays. See <a href="/blog/how-to-price-your-airbnb-per-night/">how to price your Airbnb per night</a>.</li>
+<li>Reduce questions and damage with clear <a href="/blog/airbnb-house-rules-examples/">house rules</a> and a printed guest guide.</li>
+</ul>
+<p>Related: <a href="/tools/airbnb-income-calculator/">Airbnb Income Calculator</a> and <a href="/tools/savings-goal-calculator/">Savings Goal Calculator</a>.</p>
+<p><small>Estimates only. This does not include taxes, local permit fees or your own labour, which vary by place. Check local short-term rental rules.</small></p>
+<footer>As an Amazon Associate I earn from qualifying purchases. · <a href="/privacy/">Privacy</a> · Free tool by Ridhwaan AI</footer>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function n(i){return Math.max(0,parseFloat($(i).value)||0)}
+function m(x){return (x<0?'-':'')+Math.abs(Math.round(x)).toLocaleString()}
+function calc(){
+  $('msg').textContent='';
+  var rate=n('rate'),clean=n('clean'),los=Math.max(1,n('los')),fixed=n('fixed'),cc=n('cc'),sup=n('sup'),fee=n('fee')/100,days=Math.min(31,Math.max(1,n('days')));
+  if(rate<=0){$('msg').textContent='Enter a nightly rate above zero.';return}
+  var perStayNet=(rate*los+clean)*(1-fee)-cc-sup;
+  var perNight=perStayNet/los;
+  if(perNight<=0){$('head').innerHTML='<div class="big neg">Each night loses money</div>';$('out').innerHTML='';$('note').textContent='Your cleaning and supplies costs are higher than what a stay earns. Raise the rate or cleaning fee, or lower costs.';return}
+  var be=fixed/perNight,occ=be/days*100;
+  var cls=occ>100?'neg':'pos';
+  $('head').innerHTML='<div class="big '+cls+'">Break-even: '+(Math.round(be*10)/10)+' nights/month ('+Math.round(occ)+'% occupancy)</div>'+(occ>100?'<p class="err">Even fully booked you would not cover your fixed costs.</p>':'');
+  var h='<tr><th>Occupancy</th><th>Nights</th><th>Monthly profit</th></tr>';
+  [30,40,50,60,70,80].forEach(function(o){
+    var nt=days*o/100,p=nt*perNight-fixed;
+    h+='<tr><td>'+o+'%</td><td>'+(Math.round(nt*10)/10)+'</td><td class="'+(p<0?'neg':'pos')+'">'+m(p)+'</td></tr>';
+  });
+  $('out').innerHTML=h;
+  $('note').textContent='Profit per booked night after platform fee, cleaning and supplies: '+m(perNight)+'. Stays per month at break-even: about '+(Math.round(be/los*10)/10)+'.';
+}
+calc();
+</script>
+</body></html>
