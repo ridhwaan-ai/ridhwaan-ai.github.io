@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Airbnb Cleaning Fee Calculator: What Should You Charge Guests?</title>
+<meta name="description" content="Free Airbnb cleaning fee calculator. Enter cleaning hours, hourly rate, laundry and supplies to find a fair cleaning fee and your cost per turnover. Nothing is stored or sent.">
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f5f7f6;color:#1d2b27;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding:18px}
+h1{font-size:1.7rem;margin:.3em 0}
+h2{font-size:1.25rem;margin-top:1.6em}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin:14px 0}
+input,select{width:100%;padding:8px;border:1px solid #b9c6c1;border-radius:6px;font-size:1rem;font-family:inherit}
+label{font-size:.9rem;color:#33443f}
+button{background:#1f7a5c;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:1rem;cursor:pointer;margin:8px 4px 4px 0}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.row>div{flex:1;min-width:180px}
+table{width:100%;border-collapse:collapse}
+td,th{padding:8px;border-bottom:1px solid #e0e8e4;text-align:left}
+td:last-child,th:last-child{text-align:right}
+.big{font-size:1.5rem;font-weight:700;color:#17684d}
+.cta{background:#fff8e6;border:1px solid #f0d58a;border-radius:10px;padding:12px;margin:14px 0}
+a{color:#17684d}
+footer{font-size:.85rem;color:#52625d;margin:30px 0 10px}
+</style></head>
+<body><div class="wrap">
+<p><a href="/">Home</a> · <a href="/blog/">Blog</a></p>
+<h1>Airbnb Cleaning Fee Calculator</h1>
+<p>Work out what a turnover really costs you, then see a fair cleaning fee to charge. It runs in your browser and nothing is saved or sent.</p>
+
+<div class="card">
+<div class="row">
+<div><label>Cleaning time per turnover (hours)<input type="number" id="hrs" value="2.5" min="0" step="0.25"></label></div>
+<div><label>Cleaner hourly rate ($)<input type="number" id="rate" value="22" min="0" step="0.5"></label></div>
+<div><label>Number of cleaners<input type="number" id="ppl" value="1" min="1" step="1"></label></div>
+</div>
+<div class="row">
+<div><label>Laundry cost per turnover ($)<input type="number" id="laun" value="12" min="0" step="0.5"></label></div>
+<div><label>Supplies &amp; consumables ($)<input type="number" id="sup" value="6" min="0" step="0.5"></label></div>
+<div><label>Restock extras: coffee, soap, etc. ($)<input type="number" id="ext" value="4" min="0" step="0.5"></label></div>
+</div>
+<div class="row">
+<div><label>Average stay length (nights)<input type="number" id="nights" value="3" min="1" step="1"></label></div>
+<div><label>Nightly rate ($)<input type="number" id="nr" value="120" min="0" step="1"></label></div>
+<div><label>Charge guests<select id="mode"><option value="full">Cleaning fee covers full cost</option><option value="half">Fee covers half, rest in nightly rate</option><option value="none">No separate fee (built into rate)</option></select></label></div>
+</div>
+<button onclick="calc()">Calculate</button>
+</div>
+
+<div class="card" id="res" style="display:none">
+<p>Your cost per turnover<br><span class="big" id="cost"></span></p>
+<table id="tbl"></table>
+<p id="advice"></p>
+</div>
+
+<div class="cta"><b>Hosting for the first time?</b> The <a href="https://saibridhwaan.gumroad.com/l/hfxdgy/LAUNCH30">Airbnb Welcome Book Template</a> (my own product, made with AI assistance) includes a turnover cleaning checklist and a supplies restock list. Code LAUNCH30 gives 30% off while it lasts. Check your numbers with the <a href="/tools/airbnb-income-calculator/">Airbnb Income Calculator</a> and the <a href="/tools/airbnb-break-even-occupancy-calculator/">Break-even Occupancy Calculator</a>.</div>
+
+<h2>How the fee is worked out</h2>
+<p>Cost per turnover = cleaning hours × hourly rate × number of cleaners + laundry + supplies + restock extras. A fee that covers that cost means guests pay for the work their stay creates, and your nightly rate stays your real profit.</p>
+<h2>Tips for setting a fair cleaning fee</h2>
+<ul>
+<li>Guests compare the total price, not just the nightly rate. A very high cleaning fee on a one-night stay puts people off, so shorter stays often need a lower fee or a higher nightly rate.</li>
+<li>Check your local area: look at five similar listings and compare their total price for a typical stay.</li>
+<li>Be honest about what the fee covers and keep the cleaning checklist visible in your listing and welcome book.</li>
+<li>Track your real cleaning time for a month, then update the numbers here.</li>
+<li>Check your platform's current fee rules, as they change.</li>
+</ul>
+<p>Related: <a href="/blog/how-to-price-your-airbnb-per-night/">How to price your Airbnb per night</a> and <a href="/blog/airbnb-house-rules-examples/">Airbnb house rules examples</a>.</p>
+<footer><a href="/privacy/">Privacy</a> · Free tool by Ridhwaan AI</footer>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function v(i){var x=parseFloat($(i).value);return isNaN(x)||x<0?0:x}
+function m(x){return '$'+x.toFixed(2)}
+function calc(){
+  var labor=v('hrs')*v('rate')*Math.max(1,v('ppl'));
+  var cost=labor+v('laun')+v('sup')+v('ext');
+  var mode=$('mode').value;
+  var fee=mode==='full'?cost:mode==='half'?cost/2:0;
+  var nights=Math.max(1,v('nights'));
+  var perNight=cost/nights;
+  var h='<tr><th>Item</th><th>Amount</th></tr>';
+  h+='<tr><td>Cleaning labour</td><td>'+m(labor)+'</td></tr>';
+  h+='<tr><td>Laundry</td><td>'+m(v('laun'))+'</td></tr>';
+  h+='<tr><td>Supplies and restock</td><td>'+m(v('sup')+v('ext'))+'</td></tr>';
+  h+='<tr><td><b>Total cost per turnover</b></td><td><b>'+m(cost)+'</b></td></tr>';
+  h+='<tr><td>Cost spread over a '+nights+'-night stay</td><td>'+m(perNight)+' / night</td></tr>';
+  h+='<tr><td><b>Suggested cleaning fee</b></td><td><b>'+m(fee)+'</b></td></tr>';
+  $('tbl').innerHTML=h;
+  $('cost').textContent=m(cost);
+  var total=v('nr')*nights+fee;
+  var a='Guest total for a '+nights+'-night stay: '+m(total)+' before taxes and service fees. ';
+  if(mode==='none'){a+='With no separate fee, add about '+m(perNight)+' per night to your rate to cover cleaning.'}
+  else if(v('nr')>0&&fee/(v('nr')*nights)>0.35){a+='The fee is over a third of the room cost, which can look high to guests. Consider a minimum-stay rule or moving part of it into the nightly rate.'}
+  else{a+='That ratio looks reasonable for most markets.'}
+  $('advice').textContent=a;
+  $('res').style.display='block';
+}
+calc();
+</script>
+</body></html>
