@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gift Exchange Generator: Free Secret Santa Name Draw with Exclusions</title>
+<meta name="description" content="Free gift exchange generator. Enter names, set a budget and exclude pairs (like couples), then draw who gives to whom. Works for Secret Santa, Eid and family gift swaps. Nothing is stored or sent.">
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f5f7f6;color:#1d2b27;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding:18px}
+h1{font-size:1.7rem;margin:.3em 0}
+h2{font-size:1.25rem;margin-top:1.6em}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin:14px 0}
+input,textarea{width:100%;padding:8px;border:1px solid #b9c6c1;border-radius:6px;font-size:1rem;font-family:inherit}
+label{font-size:.9rem;color:#33443f}
+button{background:#1f7a5c;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:1rem;cursor:pointer;margin:8px 4px 4px 0}
+button.alt{background:#5b6b66}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.row>div{flex:1;min-width:200px}
+table{width:100%;border-collapse:collapse}
+td,th{padding:8px;border-bottom:1px solid #e0e8e4;text-align:left}
+.cta{background:#fff8e6;border:1px solid #f0d58a;border-radius:10px;padding:12px;margin:14px 0}
+a{color:#17684d}
+footer{font-size:.85rem;color:#52625d;margin:30px 0 10px}
+.err{color:#b00020}
+.hide{filter:blur(6px);cursor:pointer;user-select:none}
+</style></head>
+<body><div class="wrap">
+<p><a href="/">Home</a> · <a href="/blog/">Blog</a></p>
+<h1>Gift Exchange Generator (Secret Santa Draw)</h1>
+<p>Add everyone who is taking part, optionally list pairs who should not draw each other (couples, siblings), and press Draw. Everyone gives to exactly one person and receives from exactly one person, and nobody draws themselves. It runs in your browser and nothing is saved or sent.</p>
+
+<div class="card">
+<div class="row">
+<div><label>Names (one per line, at least 3)
+<textarea id="names" rows="8">Amina
+Daniel
+Priya
+Omar
+Sofia
+Liam</textarea></label></div>
+<div><label>Do not match these pairs (one pair per line, like: Amina, Daniel)
+<textarea id="ex" rows="8">Amina, Daniel</textarea></label></div>
+</div>
+<div class="row">
+<div><label>Gift budget per person (optional)<input type="text" id="bud" value="$20"></label></div>
+<div><label>Exchange date or note (optional)<input type="text" id="note" value="Open gifts on the big day"></label></div>
+</div>
+<button onclick="draw()">Draw names</button>
+<button class="alt" onclick="toggle()">Hide / show results</button>
+<div id="msg" class="err"></div>
+</div>
+
+<div class="card" id="resCard" style="display:none">
+<table id="out"></table>
+<p><small id="info"></small></p>
+<p><small>Tip: to keep it a real secret, draw with the screen hidden, then show each person only their own row. Use "Hide / show results" to blur the list.</small></p>
+</div>
+
+<div class="cta"><b>Planning the whole celebration?</b> The <a href="https://saibridhwaan.gumroad.com/l/xpzaew/LAUNCH30">Holiday Planner 2026 Printable</a> (my own product, made with AI assistance) has gift lists, a budget tracker and a timeline. Code LAUNCH30 gives 30% off while it lasts. Start free with the <a href="https://saibridhwaan.gumroad.com/l/isvqko">Holiday Countdown Checklist</a>, and set a total with the <a href="/tools/holiday-budget-calculator/">Holiday Budget Calculator</a>.</div>
+
+<h2>How it works</h2>
+<p>The tool shuffles the names and checks every pairing against your exclusion list. If a valid arrangement exists it keeps trying random shuffles until it finds one (up to several thousand attempts). If it reports no solution, your exclusions are too tight; remove one and try again. Because it is random, pressing Draw again gives a new result.</p>
+<h2>Tips for a smooth gift exchange</h2>
+<ul>
+<li>Agree the budget before the draw and say it clearly in the invitation.</li>
+<li>Ask each person for two or three wishes or interests. It makes shopping easier and avoids duds.</li>
+<li>Check dietary or personal preferences first: halaal, vegetarian, allergies, no scented products.</li>
+<li>Set a delivery date a few days before the event so late gifts do not spoil the fun.</li>
+<li>Read the <a href="/blog/how-to-budget-for-christmas-gifts/">guide to budgeting for gifts</a> for a simple way to split the total.</li>
+</ul>
+<p>Related: <a href="/tools/gift-list-maker/">Gift List Maker</a> and <a href="/tools/party-food-quantity-calculator/">Party Food Quantity Calculator</a>.</p>
+<footer><a href="/privacy/">Privacy</a> · Free tool by Ridhwaan AI</footer>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function norm(s){return s.trim().replace(/\s+/g,' ')}
+function key(s){return s.toLowerCase()}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function draw(){
+  $('msg').textContent='';
+  var names=[],seen={};
+  $('names').value.split('\n').forEach(function(n){n=norm(n);if(n&&!seen[key(n)]){seen[key(n)]=1;names.push(n)}});
+  if(names.length<3){$('msg').textContent='Enter at least 3 different names.';return}
+  var bad={};
+  $('ex').value.split('\n').forEach(function(l){
+    var p=l.split(/,|&|\band\b/i).map(norm).filter(Boolean);
+    if(p.length===2&&seen[key(p[0])]&&seen[key(p[1])]){bad[key(p[0])+'|'+key(p[1])]=1;bad[key(p[1])+'|'+key(p[0])]=1}
+  });
+  var res=null;
+  for(var t=0;t<5000&&!res;t++){
+    var r=shuffle(names.slice()),ok=true;
+    for(var i=0;i<names.length;i++){
+      var g=names[i],x=r[i];
+      if(g===x||bad[key(g)+'|'+key(x)]){ok=false;break}
+    }
+    if(ok)res=r;
+  }
+  if(!res){$('msg').textContent='No valid draw found. Remove an exclusion or add more people.';$('resCard').style.display='none';return}
+  var h='<tr><th>Giver</th><th>Gives a gift to</th></tr>';
+  for(var i=0;i<names.length;i++){h+='<tr><td>'+esc(names[i])+'</td><td><b>'+esc(res[i])+'</b></td></tr>'}
+  $('out').innerHTML=h;
+  var b=norm($('bud').value),n=norm($('note').value);
+  $('info').textContent=names.length+' people'+(b?' · Budget: '+b:'')+(n?' · '+n:'');
+  $('resCard').style.display='block';
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function toggle(){$('out').classList.toggle('hide')}
+</script>
+</body></html>
