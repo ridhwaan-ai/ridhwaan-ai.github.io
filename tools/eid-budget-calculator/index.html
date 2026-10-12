@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eid Budget Calculator: Plan Eid Clothes, Food, Gifts and Eidi (Free)</title>
+<meta name="description" content="Free Eid budget calculator. Enter your total budget, then split it across clothes, food, gifts, eidi, travel and charity. See what is left and the cost per person. Nothing is stored or sent.">
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f5f7f6;color:#1d2b27;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding:18px}
+h1{font-size:1.7rem;margin:.3em 0}
+h2{font-size:1.25rem;margin-top:1.6em}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin:14px 0}
+input{width:100%;padding:8px;border:1px solid #b9c6c1;border-radius:6px;font-size:1rem}
+label{font-size:.9rem;color:#33443f}
+button{background:#1f7a5c;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:1rem;cursor:pointer;margin:8px 4px 4px 0}
+button.sec{background:#e3ece8;color:#1d2b27}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.row>div{flex:1;min-width:180px}
+.res{display:flex;gap:12px;flex-wrap:wrap}
+.res>div{flex:1;min-width:200px;border:2px solid #cfe0d9;border-radius:10px;padding:12px}
+.big{font-size:1.5rem;font-weight:700;color:#1f7a5c}
+.bad{color:#b00020}
+.good{background:#e6f5ee;border-radius:8px;padding:10px;margin-top:10px}
+.cta{background:#fff8e6;border:1px solid #f0d58a;border-radius:10px;padding:12px;margin:14px 0}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+td,th{padding:6px;border-bottom:1px solid #e0e8e4;text-align:left;font-size:.95rem}
+a{color:#17684d}
+footer{font-size:.85rem;color:#52625d;margin:30px 0 10px}
+.err{color:#b00020}
+small{color:#52625d}
+</style></head>
+<body><div class="wrap">
+<p><a href="/">Home</a> · <a href="/blog/">Blog</a></p>
+<h1>Eid Budget Calculator</h1>
+<p>Eid is joyful, and it is easy to overspend on new clothes, food, gifts and eidi in one week. Enter what you can spend and what you plan for each area. The tool shows what is left, and how much of the budget each area uses. It runs in your browser; nothing is saved or sent. Use your own currency.</p>
+
+<div class="card">
+<h2 style="margin-top:0">1. Your budget</h2>
+<div class="row">
+<div><label>Total Eid budget<input type="number" id="total" min="0" step="any" value="0"></label></div>
+<div><label>People in your household<input type="number" id="people" min="1" step="1" value="4"></label></div>
+<div><label>Currency symbol<input type="text" id="cur" value="$" maxlength="3"></label></div>
+</div>
+<h2>2. Planned spending</h2>
+<div class="row">
+<div><label>Eid clothes and shoes<input type="number" class="item" data-n="Clothes and shoes" min="0" step="any" value="0"></label></div>
+<div><label>Eid food and hosting<input type="number" class="item" data-n="Food and hosting" min="0" step="any" value="0"></label></div>
+<div><label>Gifts<input type="number" class="item" data-n="Gifts" min="0" step="any" value="0"></label></div>
+</div>
+<div class="row">
+<div><label>Eidi (money gifts for children)<input type="number" class="item" data-n="Eidi" min="0" step="any" value="0"></label></div>
+<div><label>Travel and visits<input type="number" class="item" data-n="Travel and visits" min="0" step="any" value="0"></label></div>
+<div><label>Decorations and cards<input type="number" class="item" data-n="Decorations and cards" min="0" step="any" value="0"></label></div>
+</div>
+<div class="row">
+<div><label>Charity (zakat al-fitr and sadaqah)<input type="number" class="item" data-n="Charity" min="0" step="any" value="0"></label></div>
+<div><label>Other<input type="number" class="item" data-n="Other" min="0" step="any" value="0"></label></div>
+</div>
+<button onclick="calc()">Calculate</button>
+<button class="sec" onclick="resetAll()">Clear</button>
+<div id="msg" class="err"></div>
+</div>
+
+<div id="out" style="display:none">
+<div class="res">
+<div>Planned total<div class="big" id="spent"></div><div id="spentd"></div></div>
+<div>Left over<div class="big" id="left"></div><div id="leftd"></div></div>
+<div>Per person<div class="big" id="pp"></div><div id="ppd"></div></div>
+</div>
+<div class="card"><table id="tbl"></table></div>
+<div class="good" id="tip"></div>
+</div>
+
+<div class="cta"><b>Planning Ramadan and Eid together?</b> The <a href="https://saibridhwaan.gumroad.com/l/dmwkax/LAUNCH30">Ramadan 2027 Planner Printable</a> (my own product, made with AI assistance) has an Eid checklist, a gifts page and a day plan. For year-round money habits, see the <a href="https://saibridhwaan.gumroad.com/l/tdlpft/LAUNCH30">2027 Budget Planner</a>. Code LAUNCH30 gives 30% off while it lasts. Also try the <a href="/tools/zakat-calculator/">Zakat Calculator</a> and the <a href="/tools/savings-goal-calculator/">Savings Goal Calculator</a>.</div>
+
+<h2>How to use this budget</h2>
+<p>Start with the total you can spend without borrowing. Fill in the areas that matter most to your family first, charity included, then trim the rest until nothing is red. If you have a few months before Eid, divide the total by the number of weeks left to see what to set aside weekly.</p>
+<h2>Tips to keep Eid affordable</h2>
+<ul>
+<li>Set the eidi amount per child first, then multiply by the number of children. It is the item that surprises people most.</li>
+<li>Buy clothes early, or reuse and swap outfits within the family.</li>
+<li>Share the hosting: ask each guest to bring one dish.</li>
+<li>Pay zakat al-fitr before the Eid prayer; check the amount per person with your local mosque or charity.</li>
+</ul>
+<p><small>This is a simple planning tool, not financial or religious advice.</small></p>
+<footer>As an Amazon Associate I earn from qualifying purchases. · <a href="/privacy/">Privacy</a> · Free tool by Ridhwaan AI</footer>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function num(x){return Math.max(0,parseFloat(x)||0)}
+function fmt(n){return $('cur').value+(Math.round(n*100)/100)}
+function calc(){
+  var total=num($('total').value),ppl=Math.max(1,Math.floor(num($('people').value))||1);
+  var items=document.querySelectorAll('.item'),spent=0,rows=[];
+  for(var i=0;i<items.length;i++){var a=num(items[i].value);spent+=a;rows.push([items[i].getAttribute('data-n'),a])}
+  if(!(total>0)){$('msg').textContent='Enter your total Eid budget.';$('out').style.display='none';return}
+  $('msg').textContent='';
+  var left=total-spent;
+  $('out').style.display='block';
+  $('spent').textContent=fmt(spent);
+  $('spentd').textContent=Math.round(spent/total*100)+'% of your budget';
+  $('left').textContent=fmt(left);
+  $('left').className='big'+(left<0?' bad':'');
+  $('leftd').textContent=left<0?'Over budget':'Still available';
+  $('pp').textContent=fmt(spent/ppl);
+  $('ppd').textContent='Across '+ppl+' people';
+  var h='<tr><th>Area</th><th>Amount</th><th>Share of budget</th></tr>';
+  for(var j=0;j<rows.length;j++){if(rows[j][1]>0)h+='<tr><td>'+rows[j][0]+'</td><td>'+fmt(rows[j][1])+'</td><td>'+Math.round(rows[j][1]/total*100)+'%</td></tr>'}
+  $('tbl').innerHTML=h;
+  $('tip').textContent=left<0?'You are '+fmt(-left)+' over. Lower the largest area first, or share costs with family.':(left===0?'Your plan uses the whole budget exactly. Consider keeping a small buffer.':'You have '+fmt(left)+' left. Consider adding it to charity or keeping it as a buffer.');
+}
+function resetAll(){
+  var it=document.querySelectorAll('.item');for(var i=0;i<it.length;i++)it[i].value=0;
+  $('total').value=0;$('people').value=4;$('out').style.display='none';$('msg').textContent='';
+}
+</script>
+</body></html>
