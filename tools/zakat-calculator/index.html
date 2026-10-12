@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zakat Calculator: Work Out Your Zakat on Savings, Gold and Business (Free)</title>
+<meta name="description" content="Free zakat calculator. Add cash, gold, silver, investments, business stock and debts owed to see if you reach nisab and how much zakat (2.5%) is due. Nothing is stored or sent.">
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f5f7f6;color:#1d2b27;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding:18px}
+h1{font-size:1.7rem;margin:.3em 0}
+h2{font-size:1.25rem;margin-top:1.6em}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin:14px 0}
+input{width:100%;padding:8px;border:1px solid #b9c6c1;border-radius:6px;font-size:1rem}
+label{font-size:.9rem;color:#33443f}
+button{background:#1f7a5c;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:1rem;cursor:pointer;margin:8px 4px 4px 0}
+button.sec{background:#e3ece8;color:#1d2b27}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.row>div{flex:1;min-width:180px}
+.res{display:flex;gap:12px;flex-wrap:wrap}
+.res>div{flex:1;min-width:200px;border:2px solid #cfe0d9;border-radius:10px;padding:12px}
+.big{font-size:1.5rem;font-weight:700;color:#1f7a5c}
+.good{background:#e6f5ee;border-radius:8px;padding:10px;margin-top:10px}
+.cta{background:#fff8e6;border:1px solid #f0d58a;border-radius:10px;padding:12px;margin:14px 0}
+a{color:#17684d}
+footer{font-size:.85rem;color:#52625d;margin:30px 0 10px}
+.err{color:#b00020}
+small{color:#52625d}
+</style></head>
+<body><div class="wrap">
+<p><a href="/">Home</a> · <a href="/blog/">Blog</a></p>
+<h1>Zakat Calculator</h1>
+<p>Zakat is 2.5% of your qualifying wealth that has been held for one lunar year, once it reaches the nisab threshold. Enter your figures below. It runs in your browser; nothing is saved or sent. Use your own currency throughout.</p>
+
+<div class="card">
+<h2 style="margin-top:0">1. Nisab threshold</h2>
+<p><small>Nisab is commonly set at 85 g of gold or 595 g of silver (silver gives a lower threshold, often preferred as it benefits the poor). Enter today's price per gram from a trusted source, then choose which standard you follow.</small></p>
+<div class="row">
+<div><label>Gold price per gram<input type="number" id="gp" min="0" step="any" placeholder="e.g. current price"></label></div>
+<div><label>Silver price per gram<input type="number" id="sp" min="0" step="any" placeholder="e.g. current price"></label></div>
+<div><label>Standard<select id="std" style="width:100%;padding:8px;border:1px solid #b9c6c1;border-radius:6px;font-size:1rem"><option value="silver">Silver (595 g)</option><option value="gold">Gold (85 g)</option></select></label></div>
+</div>
+<p><small>Or type the nisab value directly: <input type="number" id="nisabManual" min="0" step="any" placeholder="optional, overrides the above" style="max-width:260px"></small></p>
+</div>
+
+<div class="card">
+<h2 style="margin-top:0">2. Your wealth</h2>
+<div class="row">
+<div><label>Cash at home and in bank accounts<input type="number" id="cash" min="0" step="any" value="0"></label></div>
+<div><label>Gold you own (grams, for savings/investment)<input type="number" id="goldg" min="0" step="any" value="0"></label></div>
+<div><label>Silver you own (grams)<input type="number" id="silverg" min="0" step="any" value="0"></label></div>
+</div>
+<div class="row">
+<div><label>Shares or funds (market value)<input type="number" id="inv" min="0" step="any" value="0"></label></div>
+<div><label>Business stock and trade goods<input type="number" id="biz" min="0" step="any" value="0"></label></div>
+<div><label>Money owed to you and expected back<input type="number" id="owed" min="0" step="any" value="0"></label></div>
+</div>
+<h2>3. Debts due now</h2>
+<div class="row">
+<div><label>Bills and debts due within the year<input type="number" id="debts" min="0" step="any" value="0"></label></div>
+<div><label>Currency symbol<input type="text" id="cur" value="$" maxlength="3"></label></div>
+</div>
+<button onclick="calc()">Calculate zakat</button>
+<button class="sec" onclick="resetAll()">Clear</button>
+<div id="msg" class="err"></div>
+</div>
+
+<div id="out" style="display:none">
+<div class="res">
+<div>Zakatable wealth<div class="big" id="net"></div><div id="netd"></div></div>
+<div>Nisab<div class="big" id="nis"></div><div id="nisd"></div></div>
+<div>Zakat due (2.5%)<div class="big" id="due"></div><div id="dued"></div></div>
+</div>
+<div class="good" id="tip"></div>
+</div>
+
+<div class="cta"><b>Planning Ramadan giving?</b> The <a href="https://saibridhwaan.gumroad.com/l/dmwkax/LAUNCH30">Ramadan 2027 Planner Printable</a> (my own product, made with AI assistance) has a zakat worksheet, a charity log and an Eid checklist. Code LAUNCH30 gives 30% off while it lasts. Also see the <a href="/blog/how-to-prepare-for-ramadan-checklist/">Ramadan preparation checklist</a> and the <a href="/tools/savings-goal-calculator/">Savings Goal Calculator</a>.</div>
+
+<h2>How this calculator works</h2>
+<p>Total qualifying wealth = cash + gold and silver at today's price + shares + business stock + money owed to you that you expect to get back. Subtract debts due now. If the result is at or above the nisab, zakat is 2.5% of it. Below nisab, no zakat is due on that amount.</p>
+<h2>Things to keep in mind</h2>
+<ul>
+<li>Zakat is due after your wealth has stayed at or above nisab for one full lunar year (hawl). Many people pick one date each year, often in Ramadan.</li>
+<li>Your home, car and everyday items are generally not zakatable. Jewellery rulings differ between schools, so ask a scholar.</li>
+<li>Pensions, property held for rent or sale, and loans you may not recover have specific rulings. This tool does not decide them.</li>
+<li>Pay zakat to eligible recipients, and keep a record. A charity log helps.</li>
+</ul>
+<p><small>This is a simple estimator, not a religious ruling or financial advice. For your own situation, check with a qualified scholar or your local zakat authority.</small></p>
+<footer>As an Amazon Associate I earn from qualifying purchases. · <a href="/privacy/">Privacy</a> · Free tool by Ridhwaan AI</footer>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function v(i){return Math.max(0,parseFloat($(i).value)||0)}
+function fmt(n){return $('cur').value+Math.round(n*100)/100}
+function calc(){
+  $('msg').textContent='';
+  var nis=v('nisabManual');
+  if(!(nis>0)){
+    var gp=v('gp'),sp=v('sp');
+    var std=$('std').value;
+    if(std==='gold'&&gp>0)nis=85*gp;
+    else if(std==='silver'&&sp>0)nis=595*sp;
+  }
+  if(!(nis>0)){$('msg').textContent='Enter the price per gram for your chosen standard, or type the nisab value.';$('out').style.display='none';return}
+  var gold=v('goldg')*v('gp'),silver=v('silverg')*v('sp');
+  if((v('goldg')>0&&!(v('gp')>0))||(v('silverg')>0&&!(v('sp')>0))){$('msg').textContent='Enter the price per gram for any gold or silver you own.';$('out').style.display='none';return}
+  var gross=v('cash')+gold+silver+v('inv')+v('biz')+v('owed');
+  var net=Math.max(0,gross-v('debts'));
+  var due=net>=nis?net*0.025:0;
+  $('out').style.display='block';
+  $('net').textContent=fmt(net);
+  $('netd').textContent='Total '+fmt(gross)+' minus debts '+fmt(v('debts'));
+  $('nis').textContent=fmt(nis);
+  $('nisd').textContent=$('nisabManual').value?'Your own figure':($('std').value==='gold'?'85 g of gold':'595 g of silver');
+  $('due').textContent=fmt(due);
+  $('dued').textContent=due>0?'2.5% of '+fmt(net):'Below nisab';
+  $('tip').innerHTML=due>0?'If this wealth has been held for a full lunar year, about <b>'+fmt(due)+'</b> is due. Write it in a charity log and decide your recipients before Ramadan.':'Your wealth is below the nisab, so no zakat is due on this figure. Voluntary sadaqah is always welcome.';
+}
+function resetAll(){
+  ['gp','sp','nisabManual'].forEach(function(i){$(i).value=''});
+  ['cash','goldg','silverg','inv','biz','owed','debts'].forEach(function(i){$(i).value=0});
+  $('out').style.display='none';$('msg').textContent='';
+}
+</script>
+</body></html>
